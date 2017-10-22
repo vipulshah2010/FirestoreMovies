@@ -52,7 +52,7 @@ public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHo
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onReviewDeleted(mDocumentSnapshots.get(holder.getAdapterPosition()).getId());
+                    listener.deleteReview(mDocumentSnapshots.get(holder.getAdapterPosition()).getId());
                 }
             }
         });
@@ -64,7 +64,7 @@ public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHo
     }
 
     interface ReviewAdapterListener {
-        void onReviewDeleted(String id);
+        void deleteReview(String id);
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {

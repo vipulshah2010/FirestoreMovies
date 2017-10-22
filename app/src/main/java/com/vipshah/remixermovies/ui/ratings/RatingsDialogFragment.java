@@ -82,7 +82,7 @@ public class RatingsDialogFragment extends DialogFragment {
         rating.setEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
         if (mReviewListener != null) {
-            mReviewListener.onSubmitRating(rating);
+            mReviewListener.submitRatings(rating);
         }
 
         dismiss();
@@ -98,6 +98,6 @@ public class RatingsDialogFragment extends DialogFragment {
     }
 
     public interface RatingListener {
-        void onSubmitRating(RemixMovieRating remixMovieRating);
+        void submitRatings(RemixMovieRating remixMovieRating);
     }
 }

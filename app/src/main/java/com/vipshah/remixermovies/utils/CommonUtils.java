@@ -3,7 +3,9 @@ package com.vipshah.remixermovies.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
 import com.squareup.moshi.Moshi;
@@ -60,5 +62,9 @@ public final class CommonUtils {
     public static int getRandomColor() {
         String color = MATERIAL_COLORS[new Random().nextInt(MATERIAL_COLORS.length - 1)];
         return Color.parseColor(color);
+    }
+
+    public static int getColor(Context context, @ColorRes int colorRes) {
+        return ContextCompat.getColor(context, colorRes);
     }
 }

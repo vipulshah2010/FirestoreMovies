@@ -3,7 +3,6 @@ package com.vipshah.remixermovies.ui.review;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,22 +13,18 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.Transaction;
 import com.vipshah.remixermovies.R;
-import com.vipshah.remixermovies.models.RemixMovie;
+import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovieReview;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFragment.ReviewListener {
+public class ReviewsActivity extends AppCompatActivity implements
+        ReviewDialogFragment.ReviewListener, ReviewContract.ReviewView {
 
     private static final String ARG_DOCUMENT_ID = "id";
 
@@ -45,6 +40,8 @@ public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFr
     private ReviewsAdapter reviewsAdapter;
 
     private FirebaseFirestore firebaseFirestore;
+
+    private ReviewContract.ReviewPresenter reviewPresenter;
 
     public static Intent getIntent(Context context, String id) {
         Intent intent = new Intent(context, ReviewsActivity.class);
@@ -64,14 +61,16 @@ public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFr
         reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         firebaseFirestore = FirebaseFirestore.getInstance();
+
+        reviewPresenter = new ReviewPresenterPresenterImpl(this);
     }
 
     @Override
-    public void onStop() {
+    protected void onDestroy() {
         if (reviewsAdapter != null) {
             reviewsAdapter.stopListeningForLiveEvents();
         }
-        super.onStop();
+        super.onDestroy();
     }
 
     @OnClick(R.id.addReviewButton)
@@ -84,8 +83,8 @@ public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFr
         super.onStart();
 
         if (!TextUtils.isEmpty(getDocumentId())) {
-            Query query = firebaseFirestore.collection("movies").document(getDocumentId())
-                    .collection("reviews").orderBy("date", Query.Direction.DESCENDING);
+            Query query = firebaseFirestore.collection(RemixConstants.COLLECTION_MOVIES).document(getDocumentId())
+                    .collection(RemixConstants.COLLECTION_REVIEWS).orderBy("date", Query.Direction.DESCENDING);
 
             reviewsAdapter = new ReviewsAdapter(query) {
                 @Override
@@ -97,8 +96,8 @@ public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFr
 
             reviewsAdapter.setListener(new ReviewsAdapter.ReviewAdapterListener() {
                 @Override
-                public void onReviewDeleted(String id) {
-                    onDeleteReview(id);
+                public void deleteReview(String reviewId) {
+                    reviewPresenter.deleteReview(getDocumentId(), reviewId);
                 }
             });
 
@@ -108,78 +107,31 @@ public class ReviewsActivity extends AppCompatActivity implements ReviewDialogFr
         }
     }
 
-    private void onDeleteReview(final String id) {
-        firebaseFirestore.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+    @Override
+    public void submitReview(final RemixMovieReview review) {
+        reviewPresenter.submitReview(getDocumentId(), review);
+    }
 
-                final DocumentReference movieReference = firebaseFirestore.collection("movies")
-                        .document(getDocumentId());
-                final DocumentReference reviewReference = firebaseFirestore
-                        .collection("movies")
-                        .document(getDocumentId())
-                        .collection("reviews")
-                        .document(id);
+    @Override
+    public void onSubmitReview(boolean success) {
+        if (success) {
+            reviewsRecyclerView.smoothScrollToPosition(0);
+        } else {
+            Snackbar.make(findViewById(android.R.id.content), "Failed to set review", Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
-                RemixMovie movie = transaction.get(movieReference).toObject(RemixMovie.class);
-                movie.setTotalReviews(movie.getTotalReviews() - 1);
-
-                transaction.delete(reviewReference);
-                transaction.set(movieReference, movie);
-
-                return null;
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Toast.makeText(ReviewsActivity.this, "Review Deleted!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ReviewsActivity.this, "Review Deletion Failed!", Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    public void onDeleteReview(boolean success) {
+        if (success) {
+            Toast.makeText(ReviewsActivity.this, "Review Deleted!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ReviewsActivity.this, "Review Deletion Failed!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String getDocumentId() {
         return getIntent().getStringExtra(ARG_DOCUMENT_ID);
     }
 
-    @Override
-    public void onSubmitReview(final RemixMovieReview review) {
-        final DocumentReference movieReference = firebaseFirestore.collection("movies").document(getDocumentId());
-        final DocumentReference reviewReference = firebaseFirestore
-                .collection("movies")
-                .document(getDocumentId())
-                .collection("reviews")
-                .document();
-
-        firebaseFirestore.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-
-                RemixMovie movie = transaction.get(movieReference).toObject(RemixMovie.class);
-
-                movie.setTotalReviews(movie.getTotalReviews() + 1);
-                transaction.set(movieReference, movie);
-                transaction.set(reviewReference, review);
-                return null;
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                reviewsRecyclerView.smoothScrollToPosition(0);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Snackbar.make(findViewById(android.R.id.content), "Failed to set review",
-                        Snackbar.LENGTH_SHORT).show();
-            }
-        });
-    }
 }

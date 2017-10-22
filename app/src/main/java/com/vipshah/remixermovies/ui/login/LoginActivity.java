@@ -3,12 +3,9 @@ package com.vipshah.remixermovies.ui.login;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,24 +13,22 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.remixer.annotation.BooleanVariableMethod;
 import com.google.android.libraries.remixer.annotation.RangeVariableMethod;
 import com.google.android.libraries.remixer.annotation.RemixerBinder;
+import com.google.android.libraries.remixer.annotation.StringListVariableMethod;
 import com.google.android.libraries.remixer.ui.view.RemixerFragment;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.vipshah.remixermovies.R;
-import com.vipshah.remixermovies.ui.movies.MovieListActivity;
+import com.vipshah.remixermovies.ui.movies.list.MoviesListActivity;
 import com.vipshah.remixermovies.utils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -50,33 +45,26 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.passwordEditText)
     EditText passwordEditText;
 
+    @BindView(R.id.coverView)
+    View coverView;
+
+    @BindView(R.id.remixFabButton)
+    FloatingActionButton remixFabButton;
+
+    private LoginContract.LoginPresenter loginPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         RemixerBinder.bind(this);
+        RemixerFragment.newInstance().attachToFab(this, remixFabButton);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            navigateToListingScreen();
-        }
-    }
+        loginPresenter = new LoginPresenterImpl(this);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_remixer, menu);
-        return true;
-    }
+        loginPresenter.checkLogin();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_remixer:
-                RemixerFragment.newInstance().showRemixer(getSupportFragmentManager(), null);
-                return true;
-            default:
-                return false;
-        }
     }
 
     @OnClick({R.id.loginButton, R.id.registerButton})
@@ -84,38 +72,44 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            return;
-        }
-
         switch (view.getId()) {
             case R.id.loginButton:
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                onProcessAuthResult(task);
-                            }
-                        });
+                loginPresenter.login(username, password);
                 break;
             case R.id.registerButton:
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(username, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                onProcessAuthResult(task);
-                            }
-                        });
+                loginPresenter.register(username, password);
                 break;
         }
     }
 
-    private void onProcessAuthResult(Task<AuthResult> task) {
-        if (task != null && task.isSuccessful() && task.getResult() != null) {
-            navigateToListingScreen();
+    @Override
+    public void onLoginResult(boolean isSuccess) {
+        if (isSuccess) {
+            showMovies();
             finish();
+        } else {
+            Toast.makeText(this, "Failed to log in!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onRegisterResult(boolean isSuccess) {
+        if (isSuccess) {
+            showMovies();
+            finish();
+        } else {
+            Toast.makeText(this, "Failed to register!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onCheckLogin(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            showMovies();
+        }
+    }
+
+    // Remixer Configuration
 
     @RangeVariableMethod(minValue = 70, maxValue = 100, increment = 1, title = "Change Logo Size")
     void changeLogoSize(Float size) {
@@ -125,10 +119,10 @@ public class LoginActivity extends AppCompatActivity {
         imageView.setLayoutParams(params);
     }
 
-    private void navigateToListingScreen() {
+    private void showMovies() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MovieListActivity.class));
+        startActivity(new Intent(this, MoviesListActivity.class));
         finish();
     }
 
@@ -142,6 +136,21 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             usernameEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
             passwordEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        }
+    }
+
+    @StringListVariableMethod(title = "Cover View Color", limitedToValues = {"Accent", "Primary", "Primary Dark"})
+    void changeCoverViewColor(String color) {
+        switch (color) {
+            case "Accent":
+                coverView.setBackgroundColor(CommonUtils.getColor(this, R.color.colorAccent));
+                break;
+            case "Primary":
+                coverView.setBackgroundColor(CommonUtils.getColor(this, R.color.colorPrimary));
+                break;
+            case "Primary Dark":
+                coverView.setBackgroundColor(CommonUtils.getColor(this, R.color.colorPrimaryDark));
+                break;
         }
     }
 }

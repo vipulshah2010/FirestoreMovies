@@ -1,4 +1,4 @@
-package com.vipshah.remixermovies.ui.movies;
+package com.vipshah.remixermovies.ui.movies.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,7 +30,7 @@ public class MoviesAdapter extends FirestoreAdapter<MoviesAdapter.MoviesViewHold
         super(query);
     }
 
-    public void setListener(MoviesAdapterListener listener) {
+    void setListener(MoviesAdapterListener listener) {
         this.mListener = listener;
     }
 
@@ -45,8 +45,7 @@ public class MoviesAdapter extends FirestoreAdapter<MoviesAdapter.MoviesViewHold
         final DocumentSnapshot documentSnapshot = mDocumentSnapshots.get(position);
         final RemixMovie movie = documentSnapshot.toObject(RemixMovie.class);
 
-        Picasso.with(holder.itemView.getContext()).load("https://image.tmdb.org/t/p/w780" + movie.getPoster())
-                .fit().into(holder.movieImageView);
+        Picasso.with(holder.itemView.getContext()).load(movie.getPoster()).fit().into(holder.movieImageView);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +56,7 @@ public class MoviesAdapter extends FirestoreAdapter<MoviesAdapter.MoviesViewHold
             }
         });
 
-        holder.ratingBar.setRating(Math.round(movie.getAverageRatings()));
+        holder.ratingBar.setRating(movie.getAverageRatings());
 
         holder.movieLabelText.setText(movie.getTitle());
         holder.movieDateText.setText(movie.getReleaseDate());

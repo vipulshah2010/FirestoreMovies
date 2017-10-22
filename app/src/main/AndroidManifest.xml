@@ -22,9 +22,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.movies.MovieListActivity"
+            android:name=".ui.movies.list.MoviesListActivity"
             android:label="@string/movies" />
-        <activity android:name=".ui.details.MovieDetailActivity" />
+        <activity android:name=".ui.movies.detail.MovieDetailActivity" />
         <activity
             android:name=".ui.review.ReviewsActivity"
             android:label="@string/reviews" />

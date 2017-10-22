@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@android:color/white"
             android:orientation="vertical"
             android:weightSum="2">
 
@@ -24,6 +24,7 @@
                 android:layout_weight="1">
 
                 <View
+                    android:id="@+id/coverView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary" />
@@ -33,7 +34,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="@dimen/activity_margin"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_svg_camera" />
 
@@ -118,5 +119,14 @@
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/remixFabButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/activity_margin"
+            android:src="@drawable/ic_svg_remix"
+            app:fabSize="mini" />
     </FrameLayout>
 </ScrollView>

@@ -10,6 +10,7 @@
     <string name="rate_this_movie">Rate this Movie</string>
     <string name="synopsis">synopsis</string>
     <string name="review_count">%1$s Reviews</string>
+    <string name="movie_rated">Rated %1$s</string>
     <string name="review">How was your experience?</string>
     <string name="reviews">Reviews</string>
     <string name="submit">Submit</string>
@@ -18,4 +19,8 @@
     <string name="add_rating">Add Rating</string>
     <string name="total_votes">Votes: %1$s</string>
     <string name="no_reviews_available">No reviews available</string>
+    <string name="rating_adult">18+</string>
+    <string name="rating_universal">UA</string>
+    <string name="thanks_for_ratings">Thanks for your ratings</string>
+    <string name="failed_to_add_ratings">Failed to add ratings</string>
 </resources>
