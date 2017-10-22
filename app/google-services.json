@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1049416569139",
+    "firebase_url": "https://remixermovies.firebaseio.com",
+    "project_id": "remixermovies",
+    "storage_bucket": "remixermovies.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049416569139:android:a26bac30357c25ac",
+        "android_client_info": {
+          "package_name": "com.vipshah.remixermovies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049416569139-pkcj7eqokamfjcu7v02c93c6qso1i4hc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vipshah.remixermovies",
+            "certificate_hash": "94b80eca1debd3a5dcf1ea464b9a86bf4778da70"
+          }
+        },
+        {
+          "client_id": "1049416569139-um9s5usphkg0ip0ln5cpsqvaosmph2ae.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWX9SOxh7rrerQk_9Qz3g345XovUNd5Og"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049416569139-um9s5usphkg0ip0ln5cpsqvaosmph2ae.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

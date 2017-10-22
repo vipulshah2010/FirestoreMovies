@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Remixer</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="movies">Movies</string>
+    <string name="upload">upload</string>
+    <string name="delete">delete</string>
+    <string name="rate_this_movie">Rate this Movie</string>
+    <string name="synopsis">synopsis</string>
+    <string name="review_count">%1$s Reviews</string>
+    <string name="review">How was your experience?</string>
+    <string name="reviews">Reviews</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_review">Add Review</string>
+    <string name="add_rating">Add Rating</string>
+    <string name="total_votes">Votes: %1$s</string>
+    <string name="no_reviews_available">No reviews available</string>
+</resources>
