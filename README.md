@@ -1,7 +1,7 @@
 # FirestoreMovies
 Simple Movie application showcasing use of Firestore document based database.
 
-This application is built to showcase use of Firestore concepts at Google Devfest'17 Mumbai Android workshop. Clean architecture patterns/MVP/Dependency Injection are omitted in order to keep flow simple.
+This application is built to showcase use of Firestore concepts at Google Devfest'17 Mumbai Android workshop.
 
 ## Features
 
@@ -28,8 +28,9 @@ With the app, you can:
 * [Picasso](http://square.github.io/picasso/)
 * [Moshi](https://github.com/square/moshi)
 * [Remixer](https://github.com/material-foundation/material-remixer-android)
+* [Dagger2](https://github.com/google/dagger)
 
-## Setps
+## Steps
 
 * Open the [Firebase Console](https://console.firebase.google.com/u/0/) and click Add project.
 * Select the option to Enable Cloud Firestore Beta for this project.

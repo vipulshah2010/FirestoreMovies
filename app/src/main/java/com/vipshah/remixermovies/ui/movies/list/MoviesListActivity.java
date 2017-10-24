@@ -3,7 +3,6 @@ package com.vipshah.remixermovies.ui.movies.list;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +19,16 @@ import com.google.firebase.firestore.Query;
 import com.vipshah.remixermovies.R;
 import com.vipshah.remixermovies.ui.movies.detail.MovieDetailActivity;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.DaggerAppCompatActivity;
 
-public class MoviesListActivity extends AppCompatActivity implements MoviesListContract.MoviesListView {
+import static com.vipshah.remixermovies.ui.movies.list.MoviesListContract.MoviesListPresenter;
+import static com.vipshah.remixermovies.ui.movies.list.MoviesListContract.MoviesListView;
+
+public class MoviesListActivity extends DaggerAppCompatActivity implements MoviesListView {
 
     @BindView(R.id.moviesRecyclerView)
     RecyclerView mMoviesRecyclerView;
@@ -31,11 +36,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private MoviesAdapter mMoviesAdapter;
+    @Inject
+    MoviesListPresenter<MoviesListView> mPresenter;
 
+    private MoviesAdapter mMoviesAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private GridLayoutManager mGridLayoutManager;
-    private MoviesListContract.MoviesListPresenter moviesListPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,25 +54,24 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
 
         RemixerFragment.newInstance().attachToFab(this, (FloatingActionButton) findViewById(R.id.remixerFab));
 
-        moviesListPresenter = new MoviesListPresenterImpl(this);
-
         mGridLayoutManager = new GridLayoutManager(this, 2);
         mLinearLayoutManager = new LinearLayoutManager(this);
 
+        mPresenter.attach(this);
         mMoviesRecyclerView.setLayoutManager(mGridLayoutManager);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        moviesListPresenter.fetchMovies();
+        mPresenter.fetchMovies();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_upload_movies:
-                moviesListPresenter.uploadMovies(this);
+                mPresenter.uploadMovies();
                 return true;
             case R.id.action_delete_movies:
                 deleteAllMovies();
@@ -119,6 +124,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     @Override
     protected void onDestroy() {
         mMoviesAdapter.stopListeningForLiveEvents();
+        mPresenter.detach();
         super.onDestroy();
     }
 
@@ -148,5 +154,15 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesListC
     public void onUploadMovies(boolean success) {
         // no need to take any action as we have set live listener adapter for changes.
         // onEventTriggered will be fired automatically
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 }

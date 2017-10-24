@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -27,11 +26,18 @@ import com.vipshah.remixermovies.models.RemixMovieRating;
 import com.vipshah.remixermovies.ui.ratings.RatingsDialogFragment;
 import com.vipshah.remixermovies.ui.review.ReviewsActivity;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerAppCompatActivity;
 
-public class MovieDetailActivity extends AppCompatActivity implements RatingsDialogFragment.RatingListener, MovieDetailContract.MovieDetailView {
+import static com.vipshah.remixermovies.ui.movies.detail.MovieDetailContract.MovieDetailPresenter;
+import static com.vipshah.remixermovies.ui.movies.detail.MovieDetailContract.MovieDetailView;
+
+public class MovieDetailActivity extends DaggerAppCompatActivity implements
+        RatingsDialogFragment.RatingListener, MovieDetailView {
 
     private static final String ARG_DOCUMENT_ID = "id";
 
@@ -62,11 +68,13 @@ public class MovieDetailActivity extends AppCompatActivity implements RatingsDia
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private FirebaseFirestore mFirebaseFirestore;
+    @Inject
+    MovieDetailPresenter<MovieDetailView> mPresenter;
+
+    @Inject
+    FirebaseFirestore mFirebaseFirestore;
 
     private ListenerRegistration mMovieListenerRegistration;
-
-    private MovieDetailContract.MovieDetailPresenter movieDetailPresenter;
 
     public static Intent getIntent(Context context, String id) {
         Intent intent = new Intent(context, MovieDetailActivity.class);
@@ -81,12 +89,15 @@ public class MovieDetailActivity extends AppCompatActivity implements RatingsDia
 
         ButterKnife.bind(this);
         // RemixerBinder.bind(this);
-
         setSupportActionBar(toolbar);
 
-        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mPresenter.attach(this);
+    }
 
-        movieDetailPresenter = new MovieDetailPresenterImpl(this);
+    @Override
+    protected void onDestroy() {
+        mPresenter.detach();
+        super.onDestroy();
     }
 
     @Override
@@ -139,12 +150,12 @@ public class MovieDetailActivity extends AppCompatActivity implements RatingsDia
 
     @OnClick(R.id.rateMovieButton)
     void displayRatingDialog() {
-        movieDetailPresenter.loadRatings(getDocumentId());
+        mPresenter.loadRatings(getDocumentId());
     }
 
     @Override
     public void submitRatings(final RemixMovieRating remixMovieRating) {
-        movieDetailPresenter.submitRatings(remixMovieRating, getDocumentId());
+        mPresenter.submitRatings(remixMovieRating, getDocumentId());
     }
 
     @Override
@@ -173,4 +184,13 @@ public class MovieDetailActivity extends AppCompatActivity implements RatingsDia
         return getIntent().getStringExtra(ARG_DOCUMENT_ID);
     }
 
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
 }

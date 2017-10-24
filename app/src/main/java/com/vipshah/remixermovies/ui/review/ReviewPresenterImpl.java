@@ -12,27 +12,34 @@ import com.google.firebase.firestore.Transaction;
 import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovie;
 import com.vipshah.remixermovies.models.RemixMovieReview;
+import com.vipshah.remixermovies.ui.CommonPresenter;
 
-public class ReviewPresenterPresenterImpl implements ReviewContract.ReviewPresenter {
+import javax.inject.Inject;
 
-    private ReviewContract.ReviewView reviewView;
+public class ReviewPresenterImpl<V extends ReviewContract.ReviewView> extends CommonPresenter<V>
+        implements ReviewContract.ReviewPresenter<V> {
 
-    ReviewPresenterPresenterImpl(ReviewContract.ReviewView reviewView) {
-        this.reviewView = reviewView;
+    private FirebaseFirestore mFirebaseFirestore;
+
+    @Inject
+    ReviewPresenterImpl(FirebaseFirestore firebaseFirestore) {
+        mFirebaseFirestore = firebaseFirestore;
     }
 
     @Override
     public void submitReview(final String movieDocumentId, final RemixMovieReview review) {
-        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        final DocumentReference movieReference = firestore.collection(RemixConstants.COLLECTION_MOVIES)
+
+        final DocumentReference movieReference = mFirebaseFirestore
+                .collection(RemixConstants.COLLECTION_MOVIES)
                 .document(movieDocumentId);
-        final DocumentReference reviewReference = firestore
+
+        final DocumentReference reviewReference = mFirebaseFirestore
                 .collection(RemixConstants.COLLECTION_MOVIES)
                 .document(movieDocumentId)
                 .collection(RemixConstants.COLLECTION_REVIEWS)
                 .document();
 
-        firestore.runTransaction(new Transaction.Function<Void>() {
+        mFirebaseFirestore.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
@@ -47,27 +54,28 @@ public class ReviewPresenterPresenterImpl implements ReviewContract.ReviewPresen
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                reviewView.onSubmitReview(true);
+                getView().onSubmitReview(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                reviewView.onSubmitReview(false);
+                getView().onSubmitReview(false);
             }
         });
     }
 
     @Override
     public void deleteReview(final String movieDocumentId, final String reviewId) {
-        final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.runTransaction(new Transaction.Function<Void>() {
+        mFirebaseFirestore.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
-                final DocumentReference movieReference = firestore.collection(RemixConstants.COLLECTION_MOVIES)
+                final DocumentReference movieReference = mFirebaseFirestore
+                        .collection(RemixConstants.COLLECTION_MOVIES)
                         .document(movieDocumentId);
-                final DocumentReference reviewReference = firestore
+
+                final DocumentReference reviewReference = mFirebaseFirestore
                         .collection(RemixConstants.COLLECTION_MOVIES)
                         .document(movieDocumentId)
                         .collection(RemixConstants.COLLECTION_REVIEWS)
@@ -84,12 +92,12 @@ public class ReviewPresenterPresenterImpl implements ReviewContract.ReviewPresen
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                reviewView.onDeleteReview(true);
+                getView().onDeleteReview(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                reviewView.onDeleteReview(false);
+                getView().onDeleteReview(false);
             }
         });
     }

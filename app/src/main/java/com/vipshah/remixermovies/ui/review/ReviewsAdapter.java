@@ -6,22 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.vipshah.remixermovies.FirestoreAdapter;
 import com.vipshah.remixermovies.R;
 import com.vipshah.remixermovies.models.RemixMovieReview;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHolder> {
 
+    FirebaseUser mFirebaseUser;
+
     private ReviewAdapterListener listener;
 
-    ReviewsAdapter(Query query) {
+    @Inject
+    ReviewsAdapter(Query query, FirebaseUser firebaseUser) {
         super(query);
+        mFirebaseUser = firebaseUser;
     }
 
     void setListener(ReviewAdapterListener listener) {
@@ -42,7 +48,7 @@ public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHo
         holder.reviewTextView.setText(review.getReview());
         holder.emailTextView.setText(review.getEmail());
 
-        if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equalsIgnoreCase(review.getEmail())) {
+        if (mFirebaseUser.getEmail().equalsIgnoreCase(review.getEmail())) {
             holder.deleteReviewButton.setVisibility(View.VISIBLE);
         } else {
             holder.deleteReviewButton.setVisibility(View.GONE);

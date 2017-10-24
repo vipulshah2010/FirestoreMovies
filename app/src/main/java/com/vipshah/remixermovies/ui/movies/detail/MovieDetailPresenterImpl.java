@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -15,37 +15,46 @@ import com.google.firebase.firestore.Transaction;
 import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovie;
 import com.vipshah.remixermovies.models.RemixMovieRating;
+import com.vipshah.remixermovies.ui.CommonPresenter;
 
-public class MovieDetailPresenterImpl implements MovieDetailContract.MovieDetailPresenter {
+import javax.inject.Inject;
 
-    private MovieDetailContract.MovieDetailView movieDetailView;
+import dagger.Lazy;
 
-    MovieDetailPresenterImpl(MovieDetailContract.MovieDetailView movieDetailView) {
-        this.movieDetailView = movieDetailView;
+public class MovieDetailPresenterImpl<V extends MovieDetailContract.MovieDetailView> extends CommonPresenter<V>
+        implements MovieDetailContract.MovieDetailPresenter<V> {
+
+    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseUser mFirebaseUser;
+
+    @Inject
+    MovieDetailPresenterImpl(FirebaseFirestore firebaseFirestore, Lazy<FirebaseUser> firebaseUser) {
+        mFirebaseFirestore = firebaseFirestore;
+        mFirebaseUser = firebaseUser.get();
     }
 
     @Override
     public void loadRatings(String movieDocumentId) {
-        Query query = FirebaseFirestore.getInstance()
+        Query query = mFirebaseFirestore
                 .collection(RemixConstants.COLLECTION_MOVIES)
                 .document(movieDocumentId)
                 .collection(RemixConstants.COLLECTION_RATINGS)
-                .whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                .whereEqualTo("email", mFirebaseUser.getEmail());
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
                 if (documentSnapshots.isEmpty()) {
-                    movieDetailView.onLoadRatingsSuccess(0);
+                    getView().onLoadRatingsSuccess(0);
                 } else {
                     RemixMovieRating movieRating = documentSnapshots.getDocuments().get(0).toObject(RemixMovieRating.class);
-                    movieDetailView.onLoadRatingsSuccess(movieRating.getRatings());
+                    getView().onLoadRatingsSuccess(movieRating.getRatings());
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                movieDetailView.onLoadRatingsFailed();
+                getView().onLoadRatingsFailed();
             }
         });
     }
@@ -53,16 +62,15 @@ public class MovieDetailPresenterImpl implements MovieDetailContract.MovieDetail
     @Override
     public void submitRatings(final RemixMovieRating remixMovieRating, final String documentId) {
 
-        FirebaseFirestore.getInstance().runTransaction(new Transaction.Function<Void>() {
+        mFirebaseFirestore.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                DocumentReference movieReference = FirebaseFirestore
-                        .getInstance()
+                DocumentReference movieReference = mFirebaseFirestore
                         .collection(RemixConstants.COLLECTION_MOVIES)
                         .document(documentId);
                 DocumentReference ratingReference = movieReference.collection(RemixConstants.COLLECTION_RATINGS)
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        .document(mFirebaseUser.getUid());
 
                 RemixMovie movie = transaction.get(movieReference).toObject(RemixMovie.class);
 
@@ -85,12 +93,12 @@ public class MovieDetailPresenterImpl implements MovieDetailContract.MovieDetail
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                movieDetailView.onSubmitRatings();
+                getView().onSubmitRatings();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                movieDetailView.onSubmitRatingsFailed();
+                getView().onSubmitRatingsFailed();
             }
         });
     }

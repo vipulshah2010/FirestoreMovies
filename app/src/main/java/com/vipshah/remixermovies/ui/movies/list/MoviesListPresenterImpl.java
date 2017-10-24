@@ -11,31 +11,37 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovie;
+import com.vipshah.remixermovies.ui.CommonPresenter;
 import com.vipshah.remixermovies.utils.CommonUtils;
 
-public class MoviesListPresenterImpl implements MoviesListContract.MoviesListPresenter {
+import javax.inject.Inject;
 
-    private MoviesListContract.MoviesListView moviesListView;
+public class MoviesListPresenterImpl<V extends MoviesListContract.MoviesListView> extends CommonPresenter<V>
+        implements MoviesListContract.MoviesListPresenter<V> {
 
-    MoviesListPresenterImpl(MoviesListContract.MoviesListView moviesListView) {
-        this.moviesListView = moviesListView;
+    private Context mContext;
+    private FirebaseFirestore mFirebaseFirestore;
+
+    @Inject
+    MoviesListPresenterImpl(Context context, FirebaseFirestore firebaseFirestore) {
+        mContext = context;
+        mFirebaseFirestore = firebaseFirestore;
     }
 
     @Override
     public void fetchMovies() {
-        Query query = FirebaseFirestore.getInstance().collection(RemixConstants.COLLECTION_MOVIES);
-        moviesListView.onFetchMovies(query);
+        Query query = mFirebaseFirestore.collection(RemixConstants.COLLECTION_MOVIES);
+        getView().onFetchMovies(query);
     }
 
     @Override
-    public void uploadMovies(Context context) {
-        RemixMovie[] remixMovies = CommonUtils.getMockMovies(context).results;
+    public void uploadMovies() {
+        RemixMovie[] remixMovies = CommonUtils.getMockMovies(mContext).results;
 
-        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        WriteBatch batch = mFirebaseFirestore.batch();
 
         for (RemixMovie movie : remixMovies) {
-            DocumentReference movieReference = FirebaseFirestore
-                    .getInstance()
+            DocumentReference movieReference = mFirebaseFirestore
                     .collection(RemixConstants.COLLECTION_MOVIES)
                     .document(movie.getTitle());
             batch.set(movieReference, movie);
@@ -44,12 +50,12 @@ public class MoviesListPresenterImpl implements MoviesListContract.MoviesListPre
         batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                moviesListView.onUploadMovies(true);
+                getView().onUploadMovies(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                moviesListView.onUploadMovies(false);
+                getView().onUploadMovies(false);
             }
         });
     }

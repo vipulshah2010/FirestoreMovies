@@ -7,18 +7,26 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.vipshah.remixermovies.ui.CommonPresenter;
 
-public class LoginPresenterImpl implements LoginContract.LoginPresenter {
+import javax.inject.Inject;
 
-    private LoginContract.LoginView loginView;
+import dagger.Lazy;
 
-    LoginPresenterImpl(LoginContract.LoginView loginView) {
-        this.loginView = loginView;
+public class LoginPresenterImpl<V extends LoginContract.LoginView> extends CommonPresenter<V>
+        implements LoginContract.LoginPresenter<V> {
+
+    private FirebaseUser mFirebaseUser;
+
+    @Inject
+    LoginPresenterImpl(Lazy<FirebaseUser> firebaseUser) {
+        mFirebaseUser = firebaseUser.get();
     }
 
     @Override
     public void checkLogin() {
-        loginView.onCheckLogin(FirebaseAuth.getInstance().getCurrentUser() != null);
+        getView().onCheckLogin(mFirebaseUser != null);
     }
 
     @Override
@@ -31,9 +39,9 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
-                            loginView.onLoginResult(true);
+                            getView().onLoginResult(true);
                         } else {
-                            loginView.onLoginResult(false);
+                            getView().onLoginResult(false);
                         }
                     }
                 });
@@ -49,9 +57,9 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
-                            loginView.onRegisterResult(true);
+                            getView().onRegisterResult(true);
                         } else {
-                            loginView.onRegisterResult(false);
+                            getView().onRegisterResult(false);
                         }
                     }
                 });

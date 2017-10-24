@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,17 +17,23 @@ import com.google.android.libraries.remixer.annotation.RangeVariableMethod;
 import com.google.android.libraries.remixer.annotation.RemixerBinder;
 import com.google.android.libraries.remixer.annotation.StringListVariableMethod;
 import com.google.android.libraries.remixer.ui.view.RemixerFragment;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.vipshah.remixermovies.R;
 import com.vipshah.remixermovies.ui.movies.list.MoviesListActivity;
 import com.vipshah.remixermovies.utils.CommonUtils;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.Lazy;
+import dagger.android.support.DaggerAppCompatActivity;
 
-public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
+import static com.vipshah.remixermovies.ui.login.LoginContract.LoginPresenter;
+import static com.vipshah.remixermovies.ui.login.LoginContract.LoginView;
+
+public class LoginActivity extends DaggerAppCompatActivity implements LoginView {
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -51,7 +56,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     @BindView(R.id.remixFabButton)
     FloatingActionButton remixFabButton;
 
-    private LoginContract.LoginPresenter loginPresenter;
+    @Inject
+    LoginPresenter<LoginView> mPresenter;
+
+    @Inject
+    Lazy<FirebaseUser> mFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +70,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         RemixerBinder.bind(this);
         RemixerFragment.newInstance().attachToFab(this, remixFabButton);
 
-        loginPresenter = new LoginPresenterImpl(this);
+        mPresenter.attach(this);
+        mPresenter.checkLogin();
 
-        loginPresenter.checkLogin();
+    }
 
+    @Override
+    protected void onDestroy() {
+        mPresenter.detach();
+        super.onDestroy();
     }
 
     @OnClick({R.id.loginButton, R.id.registerButton})
@@ -74,10 +88,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
         switch (view.getId()) {
             case R.id.loginButton:
-                loginPresenter.login(username, password);
+                mPresenter.login(username, password);
                 break;
             case R.id.registerButton:
-                loginPresenter.register(username, password);
+                mPresenter.register(username, password);
                 break;
         }
     }
@@ -120,8 +134,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     }
 
     private void showMovies() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Welcome " + mFirebaseUser.get().getEmail(), Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MoviesListActivity.class));
         finish();
     }
@@ -152,5 +165,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
                 coverView.setBackgroundColor(CommonUtils.getColor(this, R.color.colorPrimaryDark));
                 break;
         }
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
     }
 }
