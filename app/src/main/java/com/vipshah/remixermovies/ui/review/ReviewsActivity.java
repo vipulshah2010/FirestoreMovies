@@ -31,7 +31,7 @@ import static com.vipshah.remixermovies.ui.review.ReviewContract.ReviewPresenter
 import static com.vipshah.remixermovies.ui.review.ReviewContract.ReviewView;
 
 public class ReviewsActivity extends DaggerAppCompatActivity implements
-        ReviewDialogFragment.ReviewListener, ReviewView {
+        InputReviewDialogFragment.ReviewListener, ReviewView {
 
     private static final String ARG_DOCUMENT_ID = "id";
 
@@ -86,7 +86,7 @@ public class ReviewsActivity extends DaggerAppCompatActivity implements
 
     @OnClick(R.id.addReviewButton)
     void addReview() {
-        new ReviewDialogFragment().show(getSupportFragmentManager(), null);
+        new InputReviewDialogFragment().show(getSupportFragmentManager(), null);
     }
 
     @Override
@@ -94,8 +94,11 @@ public class ReviewsActivity extends DaggerAppCompatActivity implements
         super.onStart();
 
         if (!TextUtils.isEmpty(getDocumentId())) {
-            Query query = mFirebaseFirestore.collection(RemixConstants.COLLECTION_MOVIES).document(getDocumentId())
-                    .collection(RemixConstants.COLLECTION_REVIEWS).orderBy("date", Query.Direction.DESCENDING);
+            Query query = mFirebaseFirestore
+                    .collection(RemixConstants.COLLECTION_MOVIES)
+                    .document(getDocumentId())
+                    .collection(RemixConstants.COLLECTION_REVIEWS)
+                    .orderBy("date", Query.Direction.DESCENDING);
 
             reviewsAdapter = new ReviewsAdapter(query, mFirebaseUser.get()) {
                 @Override

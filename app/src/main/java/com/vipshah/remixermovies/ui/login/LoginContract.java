@@ -1,7 +1,7 @@
 package com.vipshah.remixermovies.ui.login;
 
-import com.vipshah.remixermovies.ui.BasePresenter;
-import com.vipshah.remixermovies.ui.BaseView;
+import com.vipshah.remixermovies.base.BasePresenter;
+import com.vipshah.remixermovies.base.BaseView;
 
 class LoginContract {
 

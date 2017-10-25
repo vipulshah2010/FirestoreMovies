@@ -1,10 +1,8 @@
 package com.vipshah.remixermovies.ui.movies.list;
 
-import android.content.Context;
-
 import com.google.firebase.firestore.Query;
-import com.vipshah.remixermovies.ui.BasePresenter;
-import com.vipshah.remixermovies.ui.BaseView;
+import com.vipshah.remixermovies.base.BasePresenter;
+import com.vipshah.remixermovies.base.BaseView;
 
 class MoviesListContract {
 

@@ -11,15 +11,15 @@ import android.widget.TextView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
-import com.vipshah.remixermovies.FirestoreAdapter;
 import com.vipshah.remixermovies.R;
+import com.vipshah.remixermovies.base.BaseFirestoreAdapter;
 import com.vipshah.remixermovies.models.RemixMovie;
 import com.vipshah.remixermovies.utils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MoviesAdapter extends FirestoreAdapter<MoviesAdapter.MoviesViewHolder> {
+public class MoviesAdapter extends BaseFirestoreAdapter<MoviesAdapter.MoviesViewHolder> {
 
     private MoviesAdapterListener mListener;
 

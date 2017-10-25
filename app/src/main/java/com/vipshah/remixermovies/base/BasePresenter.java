@@ -1,4 +1,4 @@
-package com.vipshah.remixermovies.ui;
+package com.vipshah.remixermovies.base;
 
 public interface BasePresenter<V extends BaseView> {
 

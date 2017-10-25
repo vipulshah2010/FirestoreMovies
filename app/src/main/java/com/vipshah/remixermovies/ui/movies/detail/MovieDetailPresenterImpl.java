@@ -45,16 +45,16 @@ public class MovieDetailPresenterImpl<V extends MovieDetailContract.MovieDetailV
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
                 if (documentSnapshots.isEmpty()) {
-                    getView().onLoadRatingsSuccess(0);
+                    getView().onLoadRatings(true, 0);
                 } else {
                     RemixMovieRating movieRating = documentSnapshots.getDocuments().get(0).toObject(RemixMovieRating.class);
-                    getView().onLoadRatingsSuccess(movieRating.getRatings());
+                    getView().onLoadRatings(true, movieRating.getRatings());
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                getView().onLoadRatingsFailed();
+                getView().onLoadRatings(false, 0);
             }
         });
     }
@@ -93,12 +93,12 @@ public class MovieDetailPresenterImpl<V extends MovieDetailContract.MovieDetailV
         }).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                getView().onSubmitRatings();
+                getView().onSubmitRatings(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                getView().onSubmitRatingsFailed();
+                getView().onSubmitRatings(false);
             }
         });
     }

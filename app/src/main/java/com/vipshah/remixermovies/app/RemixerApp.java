@@ -1,9 +1,9 @@
-package com.vipshah.remixermovies;
+package com.vipshah.remixermovies.app;
 
 import com.google.android.libraries.remixer.Remixer;
 import com.google.android.libraries.remixer.storage.LocalStorage;
 import com.google.android.libraries.remixer.ui.RemixerInitialization;
-import com.vipshah.remixermovies.di.DaggerAppComponent;
+import com.vipshah.remixermovies.di.DaggerApplicationComponent;
 
 import dagger.android.AndroidInjector;
 import dagger.android.support.DaggerApplication;
@@ -20,6 +20,6 @@ public class RemixerApp extends DaggerApplication {
 
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
-        return DaggerAppComponent.builder().create(this);
+        return DaggerApplicationComponent.builder().create(this);
     }
 }

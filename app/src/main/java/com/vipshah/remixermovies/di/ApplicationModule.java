@@ -5,13 +5,13 @@ import android.content.Context;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vipshah.remixermovies.RemixerApp;
+import com.vipshah.remixermovies.app.RemixerApp;
 
 import dagger.Module;
 import dagger.Provides;
 
 @Module
-class AppModule {
+class ApplicationModule {
 
     @Provides
     Context provideContext(RemixerApp application) {

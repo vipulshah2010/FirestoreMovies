@@ -1,19 +1,15 @@
 package com.vipshah.remixermovies.ui.movies.detail;
 
+import com.vipshah.remixermovies.base.BasePresenter;
+import com.vipshah.remixermovies.base.BaseView;
 import com.vipshah.remixermovies.models.RemixMovieRating;
-import com.vipshah.remixermovies.ui.BasePresenter;
-import com.vipshah.remixermovies.ui.BaseView;
 
 class MovieDetailContract {
 
     public interface MovieDetailView extends BaseView {
-        void onLoadRatingsSuccess(float ratings);
+        void onLoadRatings(boolean success, float ratings);
 
-        void onLoadRatingsFailed();
-
-        void onSubmitRatings();
-
-        void onSubmitRatingsFailed();
+        void onSubmitRatings(boolean success);
     }
 
     public interface MovieDetailPresenter<V extends MovieDetailView> extends BasePresenter<V> {

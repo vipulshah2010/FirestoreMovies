@@ -1,6 +1,6 @@
 package com.vipshah.remixermovies.di;
 
-import com.vipshah.remixermovies.RemixerApp;
+import com.vipshah.remixermovies.app.RemixerApp;
 
 import javax.inject.Singleton;
 
@@ -12,9 +12,9 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {
         AndroidSupportInjectionModule.class,
         ActivityBindingModule.class,
-        AppModule.class,
+        ApplicationModule.class,
 })
-public interface AppComponent extends AndroidInjector<RemixerApp> {
+public interface ApplicationComponent extends AndroidInjector<RemixerApp> {
 
     void inject(RemixerApp application);
 

@@ -9,8 +9,8 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
-import com.vipshah.remixermovies.FirestoreAdapter;
 import com.vipshah.remixermovies.R;
+import com.vipshah.remixermovies.base.BaseFirestoreAdapter;
 import com.vipshah.remixermovies.models.RemixMovieReview;
 
 import javax.inject.Inject;
@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHolder> {
+public class ReviewsAdapter extends BaseFirestoreAdapter<ReviewsAdapter.ReviewViewHolder> {
 
     FirebaseUser mFirebaseUser;
 
@@ -35,7 +35,7 @@ public class ReviewsAdapter extends FirestoreAdapter<ReviewsAdapter.ReviewViewHo
     }
 
     @Override
-    public ReviewsAdapter.ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_review, parent, false);
         return new ReviewViewHolder(view);
     }

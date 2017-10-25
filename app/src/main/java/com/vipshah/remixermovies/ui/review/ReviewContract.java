@@ -1,8 +1,8 @@
 package com.vipshah.remixermovies.ui.review;
 
 import com.vipshah.remixermovies.models.RemixMovieReview;
-import com.vipshah.remixermovies.ui.BasePresenter;
-import com.vipshah.remixermovies.ui.BaseView;
+import com.vipshah.remixermovies.base.BasePresenter;
+import com.vipshah.remixermovies.base.BaseView;
 
 class ReviewContract {
 

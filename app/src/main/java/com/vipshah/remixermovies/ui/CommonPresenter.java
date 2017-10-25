@@ -1,5 +1,8 @@
 package com.vipshah.remixermovies.ui;
 
+import com.vipshah.remixermovies.base.BasePresenter;
+import com.vipshah.remixermovies.base.BaseView;
+
 public class CommonPresenter<V extends BaseView> implements BasePresenter<V> {
 
     private V view;

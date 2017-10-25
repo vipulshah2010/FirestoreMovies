@@ -159,25 +159,23 @@ public class MovieDetailActivity extends DaggerAppCompatActivity implements
     }
 
     @Override
-    public void onLoadRatingsSuccess(float ratings) {
-        RatingsDialogFragment.newInstance(ratings).show(getSupportFragmentManager(), null);
+    public void onLoadRatings(boolean success, float ratings) {
+        if (success) {
+            RatingsDialogFragment.newInstance(ratings).show(getSupportFragmentManager(), null);
+        } else {
+            Toast.makeText(MovieDetailActivity.this, "Failed to load ratings!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    public void onLoadRatingsFailed() {
-        Toast.makeText(MovieDetailActivity.this, "Failed to fetch ratings!", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSubmitRatings() {
-        Snackbar.make(findViewById(android.R.id.content), R.string.thanks_for_ratings,
-                Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSubmitRatingsFailed() {
-        Snackbar.make(findViewById(android.R.id.content), R.string.failed_to_add_ratings,
-                Snackbar.LENGTH_SHORT).show();
+    public void onSubmitRatings(boolean success) {
+        if (success) {
+            Snackbar.make(findViewById(android.R.id.content), R.string.thanks_for_ratings,
+                    Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(findViewById(android.R.id.content), R.string.failed_to_add_ratings,
+                    Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private String getDocumentId() {

@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ReviewDialogFragment extends DialogFragment {
+public class InputReviewDialogFragment extends DialogFragment {
 
     @BindView(R.id.reviewEditText)
     EditText mReviewEditText;

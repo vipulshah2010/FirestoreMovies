@@ -1,4 +1,4 @@
-package com.vipshah.remixermovies;
+package com.vipshah.remixermovies.base;
 
 import android.support.v7.widget.RecyclerView;
 
@@ -13,14 +13,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FirestoreAdapter<VH extends RecyclerView.ViewHolder> extends
+public abstract class BaseFirestoreAdapter<VH extends RecyclerView.ViewHolder> extends
         RecyclerView.Adapter<VH> implements EventListener<QuerySnapshot> {
 
     protected List<DocumentSnapshot> mDocumentSnapshots = new ArrayList<>();
     private Query mQuery;
     private ListenerRegistration mListenerRegistration;
 
-    protected FirestoreAdapter(Query query) {
+    protected BaseFirestoreAdapter(Query query) {
         mQuery = query;
     }
 
