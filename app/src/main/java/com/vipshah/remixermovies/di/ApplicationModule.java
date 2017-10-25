@@ -7,6 +7,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vipshah.remixermovies.app.RemixerApp;
 
+import javax.annotation.Nullable;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -23,6 +25,7 @@ class ApplicationModule {
         return FirebaseFirestore.getInstance();
     }
 
+    @Nullable
     @Provides
     FirebaseUser provideUser() {
         return FirebaseAuth.getInstance().getCurrentUser();

@@ -11,16 +11,52 @@ With the app, you can:
 * Submit / View Ratings
 
 ## Screens
+| Movie Listing  | Movie Details |
+| ------------- | ------------- |
+| ![](../master/art/movie_list.png)  | ![](../master/art/movie_details.png)  |
 
-![screen](../master/art/movie_list.png)
+| Movie Remixer  | Movie Reviews |
+| ------------- | ------------- |
+| ![screen](../master/art/movie_remixer.png)  | ![screen](../master/art/movie_reviews.png)  |
 
-![screen](../master/art/movie_details.png)
+| Movie Ratings |
+| ------------- |
+| ![screen](../master/art/movie_ratings.png)|
 
-![screen](../master/art/movie_remixer.png)
+## Diagram
 
-![screen](../master/art/movie_reviews.png)
+![](../master/art/flowchart.png)
 
-![screen](../master/art/movie_ratings.png)
+## Description
+
+* Root Collection is Movies which Contain multiple Movie documents
+* Each Movie document inturn contains two collections -> Ratings and Reviews
+
+## Documents
+
+| Movie          |  
+| ---------------|  
+| totalRatings   |  
+| averageRatings |  
+| totalReviews   |  
+| title          |
+| poster         |
+| language       |   
+| adult          | 
+| overview       |
+| releaseDate    |
+
+| Rating  |
+| --------|
+| email   |
+| ratings |
+| date    |
+
+| Reviews |
+| --------|
+| email   |
+| review  |
+| date    | 
 
 ## Libraries
 
