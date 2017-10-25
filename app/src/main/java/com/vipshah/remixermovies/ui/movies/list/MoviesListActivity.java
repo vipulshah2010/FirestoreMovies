@@ -115,7 +115,7 @@ public class MoviesListActivity extends DaggerAppCompatActivity implements Movie
 
     @BooleanVariableMethod(initialValue = true, title = "Grid Style")
     void setGridLayoutManager(Boolean gridStyle) {
-        if (mMoviesRecyclerView != null && mMoviesAdapter != null) {
+        if (mMoviesAdapter != null) {
             mMoviesRecyclerView.setLayoutManager(gridStyle ? mGridLayoutManager : mLinearLayoutManager);
             mMoviesAdapter.notifyDataSetChanged();
         }

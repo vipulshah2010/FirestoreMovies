@@ -14,9 +14,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.vipshah.remixermovies.R;
-import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovieReview;
 
 import javax.inject.Inject;
@@ -84,23 +82,15 @@ public class ReviewsActivity extends DaggerAppCompatActivity implements
         super.onDestroy();
     }
 
-    @OnClick(R.id.addReviewButton)
-    void addReview() {
-        new InputReviewDialogFragment().show(getSupportFragmentManager(), null);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
 
         if (!TextUtils.isEmpty(getDocumentId())) {
-            Query query = mFirebaseFirestore
-                    .collection(RemixConstants.COLLECTION_MOVIES)
-                    .document(getDocumentId())
-                    .collection(RemixConstants.COLLECTION_REVIEWS)
-                    .orderBy("date", Query.Direction.DESCENDING);
 
-            reviewsAdapter = new ReviewsAdapter(query, mFirebaseUser.get()) {
+            // TODO - Step-6 Write query to fetch latest reviews and call following
+
+            reviewsAdapter = new ReviewsAdapter(null, mFirebaseUser.get()) {
                 @Override
                 public void onEventTriggered() {
                     reviewsRecyclerView.setVisibility(getItemCount() > 0 ? View.VISIBLE : View.GONE);
@@ -119,6 +109,11 @@ public class ReviewsActivity extends DaggerAppCompatActivity implements
 
             reviewsAdapter.startListeningForLiveEvents();
         }
+    }
+
+    @OnClick(R.id.addReviewButton)
+    public void addReview() {
+        new InputReviewDialogFragment().show(getSupportFragmentManager(), null);
     }
 
     @Override

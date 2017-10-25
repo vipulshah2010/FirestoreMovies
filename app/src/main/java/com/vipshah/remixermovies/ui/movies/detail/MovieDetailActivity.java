@@ -14,15 +14,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.squareup.picasso.Picasso;
 import com.vipshah.remixermovies.R;
-import com.vipshah.remixermovies.RemixConstants;
 import com.vipshah.remixermovies.models.RemixMovie;
 import com.vipshah.remixermovies.models.RemixMovieRating;
 import com.vipshah.remixermovies.ui.ratings.RatingsDialogFragment;
@@ -121,15 +117,8 @@ public class MovieDetailActivity extends DaggerAppCompatActivity implements
     }
 
     private void loadMovieDetails() {
-        DocumentReference reference = mFirebaseFirestore.collection(RemixConstants.COLLECTION_MOVIES)
-                .document(getDocumentId());
-
-        mMovieListenerRegistration = reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
-                loadMovieDetails(documentSnapshot);
-            }
-        });
+        // TODO - Step-3 Load movie Details
+        loadMovieDetails(null);
     }
 
     private void loadMovieDetails(DocumentSnapshot documentSnapshot) {
@@ -168,17 +157,17 @@ public class MovieDetailActivity extends DaggerAppCompatActivity implements
     }
 
     @Override
-    public void submitRatings(final RemixMovieRating remixMovieRating) {
-        mPresenter.submitRatings(remixMovieRating, getDocumentId());
-    }
-
-    @Override
     public void onLoadRatings(boolean success, float ratings) {
         if (success) {
             RatingsDialogFragment.newInstance(ratings).show(getSupportFragmentManager(), null);
         } else {
             Toast.makeText(MovieDetailActivity.this, "Failed to load ratings!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void submitRatings(final RemixMovieRating remixMovieRating) {
+        mPresenter.submitRatings(remixMovieRating, getDocumentId());
     }
 
     @Override
