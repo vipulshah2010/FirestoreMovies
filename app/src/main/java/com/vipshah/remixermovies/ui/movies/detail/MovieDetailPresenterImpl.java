@@ -2,6 +2,7 @@ package com.vipshah.remixermovies.ui.movies.detail;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -101,5 +102,23 @@ public class MovieDetailPresenterImpl<V extends MovieDetailContract.MovieDetailV
                 getView().onSubmitRatings(false);
             }
         });
+    }
+
+    @Override
+    public void deleteMovie(String documentId) {
+        if (!TextUtils.isEmpty(documentId)) {
+            mFirebaseFirestore.collection(RemixConstants.COLLECTION_MOVIES)
+                    .document(documentId).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    getView().onMovieDeleted(true);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    getView().onMovieDeleted(false);
+                }
+            });
+        }
     }
 }

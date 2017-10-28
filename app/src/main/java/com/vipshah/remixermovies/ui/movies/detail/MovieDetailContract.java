@@ -10,11 +10,15 @@ class MovieDetailContract {
         void onLoadRatings(boolean success, float ratings);
 
         void onSubmitRatings(boolean success);
+
+        void onMovieDeleted(boolean success);
     }
 
     public interface MovieDetailPresenter<V extends MovieDetailView> extends BasePresenter<V> {
         void loadRatings(String movieDocumentId);
 
         void submitRatings(RemixMovieRating ratings, String movieDocumentId);
+
+        void deleteMovie(String documentId);
     }
 }

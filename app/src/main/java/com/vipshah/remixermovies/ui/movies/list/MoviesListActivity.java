@@ -130,6 +130,7 @@ public class MoviesListActivity extends DaggerAppCompatActivity implements Movie
 
     @Override
     public void onFetchMovies(Query query) {
+
         mMoviesAdapter = new MoviesAdapter(query) {
             @Override
             public void onEventTriggered() {
